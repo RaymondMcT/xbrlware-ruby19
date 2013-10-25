@@ -20,9 +20,9 @@
 module Xbrlware
   module Edgar
     module FileUtil # :nodoc:
-      #def mkdir(dir)
-      #  File.makedirs(dir) unless File.directory?(dir)  
-      #end
+      def mkdir(dir)
+       File.makedirs(dir) unless File.directory?(dir)  
+      end
       
       def dump_to_file(file, content)
         File.open(file, 'w') {|f| f.write(content) }
