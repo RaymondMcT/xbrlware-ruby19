@@ -17,6 +17,9 @@
 #           See the License for the specific language governing permissions and
 #           limitations under the License.
 #
+
+require 'open-uri'
+
 module Xbrlware
   module Edgar
     
@@ -91,7 +94,7 @@ module Xbrlware
       # Takes url and download_to (where to download)
       #  default value for download_to is current_dir    
       def download(url, download_to=File.expand_path(".")+File::SEPARATOR)
-        $LOG.info " Starting download of filings from SEC url ["+url+"]"
+        # $LOG.info " Starting download of filings from SEC url ["+url+"]"
         files=[]
         content = open(url).read
         @links = Set.new
@@ -100,13 +103,14 @@ module Xbrlware
         @base_path=(uri.scheme+"://"+uri.host+((uri.port==80 && "") || ":"+uri.port.to_s)) unless uri.host.nil?
         parse(content)
         download_to += File::SEPARATOR unless download_to.end_with?(File::SEPARATOR)
-        FileUtils.mkdir_p(download_to)
         @links.each do |link|
           file=download_to + link.split("/")[-1]
-          dump_to_file(file, open(link).read)
-          files << file
+          if link.end_with?(".xsd") || link.end_with?("pre.xml") || link.end_with?("cal.xml") || link.end_with?("def.xml") || link.end_with?("lab.xml") || link.end_with?("ref.xml")
+          elsif link.end_with?(".xml")
+            return open(link).read
+          end
         end unless uri.host.nil?
-        files
+        nil
       end
   
       # Callback method for notifying start of xml elements by REXML stream parser. 
