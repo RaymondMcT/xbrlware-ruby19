@@ -107,7 +107,9 @@ module Xbrlware
           file=download_to + link.split("/")[-1]
           if link.end_with?(".xsd") || link.end_with?("pre.xml") || link.end_with?("cal.xml") || link.end_with?("def.xml") || link.end_with?("lab.xml") || link.end_with?("ref.xml")
           elsif link.end_with?(".xml")
-            return open(link).read
+            uri = URI(link)
+            return Net::HTTP.get(uri)
+            # return open(link).read
           end
         end unless uri.host.nil?
         nil
